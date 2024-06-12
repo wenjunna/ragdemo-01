@@ -1,0 +1,6 @@
+elastic-transport==8.13.1
+elasticsearch==8.13.2
+elasticsearch7==7.17.9
+jieba==0.42.1
+nltk==3.8.1
+dotenv
