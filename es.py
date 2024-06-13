@@ -6,7 +6,7 @@
 # @brief: 检索引擎
 
 from keywords_cn import keywords_cn
-from read_pdf import extract_text_from_pdf
+from read_pdf import read_pdf
 from elasticsearch import Elasticsearch, helpers
 
 
@@ -37,10 +37,13 @@ class ES(object):
         # 灌库指令
         actions = []
         for text in text_list:
+            keywords = keywords_cn(text)
+            if not keywords:
+                continue
             action = {
                 "_index": self.index_name,
                 "_source": {
-                    "keywords": keywords_cn(text),
+                    "keywords": keywords,
                     "text": text
                 }
             }
@@ -75,7 +78,7 @@ class ES(object):
 if __name__ == '__main__':
 
     filename = "./data/InSAR变形监测方法与研究进展_朱建军.pdf"
-    text_list = extract_text_from_pdf(filename=filename, min_line_length=10)
+    text_list = read_pdf(filepath=filename, min_line_length=10)
 
     index_name = "paper_db_cn"
     es = ES(index_name=index_name)

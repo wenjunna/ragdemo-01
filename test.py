@@ -5,11 +5,11 @@
 # @File    : main.py
 # @brief: test
 from es import ES
-from read_pdf import extract_text_from_pdf
+from read_pdf import read_pdf
 from rag import build_prompt, get_completion
 
-filename = "./data/InSAR变形监测方法与研究进展_朱建军.pdf"
-text_list = extract_text_from_pdf(filename=filename, min_line_length=10)
+filename = "./data/基于LSTM和启发式搜索的遥感卫星地面站天线智能调度方法研究2020.pdf"
+# text_list = read_pdf(filepath=filename, min_line_length=5)
 
 # 1、新建索引
 index_name = "paper_db_cn"
@@ -20,7 +20,7 @@ es = ES(index_name=index_name)
 
 # 3、Prompt模版
 prompt_template = """
-从数据库中检索的相关信息:
+已知信息:
 __INFO__
 
 用户问：
@@ -29,8 +29,10 @@ __QUERY__
 请用中文回答用户问题。
 """
 
+print("prompt_template", prompt_template)
 # 4、检索
-user_query = "insar技术的用途有哪些？"
+user_query = "这篇论文中使用的是几层的LSTM？"
+# user_query = "LSTM？"
 search_results = es.search(user_query, 3)
 
 # 5、根据Prompt模版生成Prompt

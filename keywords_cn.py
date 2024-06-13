@@ -8,7 +8,16 @@
 import re
 import jieba.analyse
 from str_qj2bj import clean_norm
-from nltk.corpus import stopwords
+
+# 读取中文停用词表
+def load_stopwords(filepath):
+    with open(filepath, 'r', encoding='utf-8') as file:
+        stopwords = file.read().splitlines()
+    return set(stopwords)
+
+
+# 加载停用词表
+chinese_stopwords = load_stopwords('./stopwords.dict')
 
 
 def extract_useful_chars(text):
@@ -31,18 +40,15 @@ def keywords_cn(text):
     '''
     no_symbols = extract_useful_chars(text)
 
-    # 使用 TF-IDF 提取关键词
-    key_words = jieba.analyse.extract_tags(no_symbols, topK=10, withWeight=True)
-    keywords = []
-    for keyword, weight in key_words:
-        keywords.append(keyword)
+    # 使用jieba进行分词
+    words = jieba.lcut(no_symbols)
+    filter_words = [word for word in words if word not in chinese_stopwords and len(word) > 1]
 
-    # 打印关键词
-    return ' '.join(keywords)
+    return ' '.join(filter_words)
 
 
 if __name__ == '__main__':
     input_string = '同震的形变 量 级 一 般 较 大 （分 米 至 米 级），虽 然 Ｄ－ＩｎＳＡＲ 技术可以获得较好的监测效果 ，但是 由于ＩｎＳＡＲ 技术侧视成像几何的限制，无法估计 地震三维形变 ［４０］。因此，近年 来 围 绕 如 何 融 合 不'
     print(input_string)
     key_words = keywords_cn(input_string)
-    print(key_words)
+    print("key_words:", key_words)
